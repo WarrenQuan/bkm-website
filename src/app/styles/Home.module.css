@@ -1,0 +1,85 @@
+.container {
+    min-height: 100vh;
+    padding: 0 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .inlineContainerButton {
+    display: flex;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 10px; /* Adds padding for better spacing */
+    box-sizing: border-box; /* Ensures padding is included in the width */
+  }
+
+  .inlineContainerButton > * {
+    flex: 1; /* Allows children to grow and shrink as needed */
+    margin: 5px; /* Adds margin between items */
+  }
+  
+
+  .inlineContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Ensures items are spaced out */
+    flex-wrap: wrap; /* Allows items to wrap to the next line on smaller screens */
+    padding: 10px; /* Adds padding for better spacing */
+    box-sizing: border-box; /* Ensures padding is included in the width */
+  }
+  
+  .inlineContainer > * {
+    flex: 1; /* Allows children to grow and shrink as needed */
+    margin: 5px; /* Adds margin between items */
+  }
+  
+  /* Example media query for small screens */
+  @media (max-width: 600px) {
+    .inlineContainer {
+      flex-direction: column; /* Stacks items vertically on small screens */
+      align-items: stretch; /* Stretches items to fill the container width */
+    }
+  }
+  
+  .main {
+    margin: 10px;
+    padding: 5rem 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .centeredParagraph {
+    background-color: rgb(255,255,255,0.8);
+    border-radius: 20px;
+    max-width: 70vw; /* Maximum width of the paragraph */
+    margin: 30px auto;   /* Center the paragraph block */
+    text-align: center; /* Center the text inside the paragraph */
+    overflow-wrap: break-word; /* Ensure long words break and wrap onto the 
+    next line */
+    padding: 4% 4% 4% 4%;
+    word-break: break-word; /* Break long words if needed */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);;
+  }
+
+  .title {
+    margin: 0;
+    line-height: 1.15;
+    font-size: 3rem;
+    text-align: center;
+    text-shadow: 2px 2px 8px #7b7b7b;
+  }
+  
+  .form {
+    margin-top: 2rem;
+  }
+  
+  .input {
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+  

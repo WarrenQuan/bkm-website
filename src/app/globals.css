@@ -8,23 +8,76 @@
   --background-end-rgb: 255, 255, 255;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
   }
-}
+} */
 
 body {
+  background: #000; /* Background color */
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
+      rgb(var(--background-end-rgb)),
       transparent,
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
 }
+
+
+.falling-images-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1; /* Place container behind the main content */
+  pointer-events: none; /* Ensure falling images do not interfere with interactions */
+}
+
+.falling-image {
+  position: absolute;
+  top: -100vh; /* Start at the top of the viewport */
+  opacity: 0;
+  transform: scale(0.1); /* Scale down the image to 50% */
+  animation: fall linear infinite, fade linear infinite;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh) scale(0.2); 
+    top: -100px; /* Apply scaling during the fall */
+   /* Fall down the viewport height */
+  }
+}
+
+@keyframes fade {
+  0% {
+    opacity: 0.1;
+  }
+  15% {
+    opacity: 0.6;
+  }
+  30% {
+    opacity: 0.05;
+  }
+  50% {
+    opacity: 0.05;
+  }
+  65% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0.1;
+  }
+}
+
 
 @layer utilities {
   .text-balance {
