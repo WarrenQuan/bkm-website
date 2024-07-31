@@ -10,7 +10,7 @@ import Head from "next/head";
 const colorOptionsGenerate = [
   { value: "#03a9f4", label: "metadata" },
   { value: "#00bcd4", label: "sentiment analysis" },
-  { value: "#009688", label: "tag" },
+  { value: "#009688", label: "tags" },
 ];
 
 const colorOptionsLLM = [
@@ -43,6 +43,7 @@ export default function Home() {
     // Process the form data here
     console.log("API Key:", data.apiKey);
     console.log("Image URL:", data.imageUrl);
+    setDescription(data);
   };
 
   const handleOptionGenerateChange = (label) => {
@@ -95,17 +96,12 @@ export default function Home() {
         </div>
         {/* conditional rendering baesd on input */}
         {type === "image url" && (
-          <ImageURLInput onSubmit={handleImageURLSubmit} model={LLM} />
+          <ImageURLInput onSubmit={handleImageURLSubmit} model={LLM} prompt={generateItem} />
         )}
         {type === "image file" && (
-          <div className={styles.inlineContainer}>
-            <input
-              type="text"
-              placeholder="enter api key"
-              className={styles.input}
-            />
-            <UploadButton onSubmit={handleFileSubmit} />
-          </div>
+         <div className={styles.inlineContainer}>
+         <UploadButton onSubmit={handleFileSubmit} model={LLM} prompt={generateItem} />
+       </div>
         )}
         {type === "csv" && (
           <div className={styles.inlineContainer}>

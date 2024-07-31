@@ -1,15 +1,12 @@
 // components/ImageURLInput.js
 import React, { useState } from "react";
-import { Button } from "@mui/material";
+import { Button, LinearProgress } from "@mui/material";
 import styles from "../styles/Home.module.css";
 
-const ImageURLInput = ({ onSubmit, model }) => {
-  const [apiKey, setApiKey] = useState(
-    ""
-  );
-  const [imageUrl, setImageUrl] = useState(
-    ""
-  );
+const ImageURLInput = ({ onSubmit, model, prompt }) => {
+  const [apiKey, setApiKey] = useState("");
+  const [loading, startLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
   const [response, setResponse] = useState(null);
 
   const handleApiKeyChange = (event) => {
@@ -19,7 +16,6 @@ const ImageURLInput = ({ onSubmit, model }) => {
   const handleImageUrlChange = (event) => {
     setImageUrl(event.target.value);
   };
-
 
   let apiRoute;
   switch (model) {
@@ -38,30 +34,39 @@ const ImageURLInput = ({ onSubmit, model }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    startLoading(true)
     console.log("in handleSubmit");
     console.log(JSON.stringify({ imageUrl }));
     console.log(apiKey);
-
-    const response = await fetch("/api/generate-description/" + apiRoute, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-      },
-      body: JSON.stringify({ imageUrl }),
-    });
+    console.log(apiRoute);
+    const response = await fetch(
+      "/api/generate-description/" + apiRoute + "/image-url",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+        },
+        body: JSON.stringify({ imageUrl: imageUrl, prompt }),
+      }
+    );
 
     const data = await response.json();
     if (response.ok) {
+      startLoading(false)
       setResponse(data);
       onSubmit(data); // Pass the response data up to the parent
       console.log(data);
     } else {
-      console.error(data.error);
+      startLoading(false)
+      console.log(data.error);
+      // <Alert severity="error">{data.error}</Alert>
     }
   };
 
   return (
+    <div>
+     
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.inlineContainer}>
         <input
@@ -83,6 +88,10 @@ const ImageURLInput = ({ onSubmit, model }) => {
         </Button>
       </div>
     </form>
+    {loading &&
+    <LinearProgress style={{margin: "5% 5% 5% 5%"}}/>
+    }
+    </div>
   );
 };
 

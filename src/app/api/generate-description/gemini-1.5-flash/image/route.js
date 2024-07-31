@@ -1,4 +1,4 @@
-import { getOpenAIDescriptionFromImage } from  "../../generate_metadata";
+import { getGoogleGeminiDescriptionFromImage } from  "../../../generate_metadata";
 import { headers } from 'next/headers'
 
 export async function POST(request) {
@@ -7,12 +7,10 @@ export async function POST(request) {
   const res = await request.json()
   const headersList = headers()
   const apiKey = headersList.get('x-api-key')
-  const imageUrl  = res.imageUrl;
-  console.log(res.imageUrl)
-  console.log(apiKey)
+  const image  = res;
 
-    if (!imageUrl) {
-      return Response.json({ error: 'Image URL is required' });
+    if (!image) {
+      return Response.json({ error: 'Image is required' });
     }
 
     if (!apiKey) {
@@ -20,7 +18,7 @@ export async function POST(request) {
     }
 
     try {
-      const description = await getOpenAIDescriptionFromImage(apiKey, imageUrl, 'gpt-4-turbo');
+      const description = await getGoogleGeminiDescriptionFromImage(apiKey, image, null, 'gemini-1.5-flash');
       return Response.json(description);
     } catch (error) {
       return Response.json({ error: 'Error generating description' });

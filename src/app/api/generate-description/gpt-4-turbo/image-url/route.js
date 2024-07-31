@@ -1,4 +1,4 @@
-import { getGoogleGeminiDescriptionFromImage } from  "../../generate_metadata";
+import { getOpenAIDescriptionFromImage } from  "../../../generate_metadata";
 import { headers } from 'next/headers'
 
 export async function POST(request) {
@@ -20,7 +20,7 @@ export async function POST(request) {
     }
 
     try {
-      const description = await getGoogleGeminiDescriptionFromImage(apiKey, imageUrl, 'gemini-1.5-flash');
+      const description = await getOpenAIDescriptionFromImage(apiKey, null, imageUrl, 'gpt-4-turbo');
       return Response.json(description);
     } catch (error) {
       return Response.json({ error: 'Error generating description' });

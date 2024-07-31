@@ -1,4 +1,4 @@
-import { getClaudeDescriptionFromImage } from  "../../generate_metadata";
+import { getOpenAIDescriptionFromImage } from  "../../../generate_metadata";
 import { headers } from 'next/headers'
 
 export async function POST(request) {
@@ -8,6 +8,8 @@ export async function POST(request) {
   const headersList = headers()
   const apiKey = headersList.get('x-api-key')
   const imageUrl  = res.imageUrl;
+  console.log("havings res")
+  console.log(res)
   console.log(res.imageUrl)
   console.log(apiKey)
 
@@ -20,7 +22,9 @@ export async function POST(request) {
     }
 
     try {
-      const description = await getClaudeDescriptionFromImage(apiKey, imageUrl, 'claude-3-5-sonnet-20240620');
+      const description = await getOpenAIDescriptionFromImage(apiKey, null, imageUrl, 'gpt-4o');
+      console.log("INSIDE DESCRIPTION")
+      console.log(description)
       return Response.json(description);
     } catch (error) {
       return Response.json({ error: 'Error generating description' });
