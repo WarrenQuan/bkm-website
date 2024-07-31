@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
-import { Button, LinearProgress } from '@mui/material';
+import { Button, LinearProgressWithLabel } from '@mui/material';
 import { FileUploader } from "react-drag-drop-files";
 import styles from "../styles/Home.module.css";
-import Alert from '@mui/material/Alert';
-import axios from 'axios';
-
+import Papa from 'papaparse'; // CSV parsing library
+import { saveAs } from 'file-saver'; // Library to save files
 
 const CSVUpload = ({ onSubmit, onUpload, model, prompt }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [apiKey, setApiKey] = useState("")
+  const [apiKey, setApiKey] = useState("");
+  const [progress, setProgress] = useState("0");
+
   const handleApiKeyChange = (event) => {
     setApiKey(event.target.value);
+  };
+
+  const handleLoading = (progress) => {
+    setProgress(progress);
   };
 
   let apiRoute;
@@ -33,83 +38,88 @@ const CSVUpload = ({ onSubmit, onUpload, model, prompt }) => {
     setSelectedFile(file);
   };
 
-  const getBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = error => reject(error);
-    });
-  };
-
   const handleUpload = async () => {
     if (!selectedFile) {
       alert('Please select a file first!');
       return;
     }
+
     setLoading(true);
-    console.log("in handleUpload");
 
-    try {
-      const base64File = await getBase64(selectedFile);
-      console.log("base64")
-      console.log({base64File})
-      const response = await axios.post(
-        `/api/generate-description/${apiRoute}/image`,
-        { base64: base64File, prompt: prompt },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey,
-          },
+    Papa.parse(selectedFile, {
+      header: true,
+      complete: async (result) => {
+        try {
+          const updatedData = [];
+          let progressTracker = 0;
+          for (const row of result.data) {
+            const { imageUrl, ...rest } = row;
+
+            // Make API call for each imageUrl
+            const response = await fetch(
+              `/api/generate-description/${apiRoute}/image-url`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "x-api-key": apiKey,
+                },
+                body: JSON.stringify({ imageUrl: imageUrl, prompt: prompt }),
+              }
+            );
+
+            const data = await response.json();
+            if (response.ok) {
+              // Add the response to the row
+              updatedData.push({ ...rest, imageUrl, generatedResponse: data.toString()});
+              onUpload(imageUrl);
+              let completionString;
+              if(progress === result.data.length)
+                completionString = "Completed! "
+              else completionString = ((progressTracker + 1 / result.data.length) * 100) + "% complete! "
+              onSubmit(completionString + "Most Recent Generation:" + data); // Pass the response data up to the parent
+              console.log(data);
+            } else {
+              console.log(data.error);
+              // Handle API error if needed
+              updatedData.push({ ...rest, imageUrl, generatedResponse: 'Error: ' + data.error });
+            }
+            progressTracker += 1;
+            handleLoading((progressTracker / result.data.length) * 100)
+          }
+
+          // Convert updated data to CSV
+          const csv = Papa.unparse(updatedData);
+          const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+          saveAs(blob, 'updated_data.csv');
+
+        } catch (error) {
+          console.error(error);
+          // You can add an alert or some error handling UI here
+        } finally {
+          setLoading(false);
         }
-      );
-
-      if (response.status === 200) {
-        onUpload(file);
-        onSubmit(response.data); // Pass the response data up to the parent
-        console.log(response.data);
-      } else {
-        console.error(response.data.error);
-        // You can add an alert or some error handling UI here
       }
-    } catch (error) {
-      console.error(error);
-      // You can add an alert or some error handling UI here
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   return (
     <div>
       <div className={styles.inlineContainer}>
-      <input
+        <input
           type="text"
-          placeholder="enter api key"
+          placeholder="Enter API key"
           className={styles.input}
           value={apiKey}
           onChange={handleApiKeyChange}
         />
         <FileUploader 
-               multiple={false}
-         id="upload-file"
-                handleChange={handleFileChange} 
-                name="file" 
-        
-                 />
-        {/* <input
-          accept="image/*"
-          style={{ display: 'none' }}
+          types={["CSV"]}
+          multiple={false}
           id="upload-file"
-          type="file"
-          onChange={handleFileChange}
+          handleChange={handleFileChange} 
+          name="file" 
         />
-        <label htmlFor="upload-file">
-          <Button variant="contained" color="primary" component="span">
-            Select File
-          </Button>
-        </label> */}
         <Button
           variant="contained"
           color="secondary"
@@ -120,7 +130,7 @@ const CSVUpload = ({ onSubmit, onUpload, model, prompt }) => {
           Upload
         </Button>
       </div>
-      {loading && <LinearProgress style={{ margin: '5%' }} />}
+      {loading && <LinearProgressWithLabel style={{ margin: '5%' }} variant="determinate" value={progress} />}
     </div>
   );
 };

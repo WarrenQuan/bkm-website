@@ -211,10 +211,7 @@ async function getOpenAIDescriptionFromImage(
 function parseAltTextAndLongDescription(content) {
   try {
     const [altText, longDescription] = content.split("LONG DESCRIPTION");
-    return {
-      altText: altText.replace("ALT TEXT", "").trim(),
-      longDescription: longDescription.trim(),
-    };
+    return content;
   } catch (error) {
     return content;
   }
