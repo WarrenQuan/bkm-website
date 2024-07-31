@@ -6,7 +6,7 @@ import Alert from '@mui/material/Alert';
 import axios from 'axios';
 
 
-const UploadButton = ({ onSubmit, onUpload, model, prompt }) => {
+const CSVUpload = ({ onSubmit, onUpload, model, prompt }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [apiKey, setApiKey] = useState("")
@@ -125,4 +125,4 @@ const UploadButton = ({ onSubmit, onUpload, model, prompt }) => {
   );
 };
 
-export default UploadButton;
+export default CSVUpload;

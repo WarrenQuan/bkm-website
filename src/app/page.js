@@ -5,7 +5,10 @@ import Background from "./components/Background";
 import BasicSelect from "./components/Dropdown";
 import UploadButton from "./components/UploadButton";
 import ImageURLInput from "./components/ImageUrlInput";
+import CSVUpload from "./components/CSVUpload";
 import Head from "next/head";
+
+const axios = require("axios");
 
 const colorOptionsGenerate = [
   { value: "#03a9f4", label: "metadata" },
@@ -30,11 +33,23 @@ export default function Home() {
   const [LLM, setLLMLabel] = React.useState("gpt4");
   const [type, setTypeLabel] = React.useState("image url");
   const [file, setFile] = React.useState();
-  const [description, setDescription] = React.useState(null);
+  const [preview, setPreview] = React.useState();
+  const [description, setDescription] = React.useState("");
 
   const handleFile = (files) => {
     setFile(files);
     console.log("selected option", file);
+  };
+
+  const handlePreview = async (file) => {
+    if(typeof file === 'string' || file instanceof String){
+      if(await checkImage(file))
+        setPreview(file);
+      else
+        setPreview("");
+    }
+    else
+      setPreview(URL.createObjectURL(file));
   };
 
   const handleImageURLSubmit = (data) => {
@@ -59,6 +74,15 @@ export default function Home() {
     console.log("selected option", label);
     setTypeLabel(label);
   };
+
+async function checkImage(imageUrl) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(true); // Image loaded successfully
+    img.onerror = () => resolve(false); // Image failed to load
+    img.src = imageUrl;
+});
+  }
 
   return (
     <div className={styles.container}>
@@ -97,28 +121,52 @@ export default function Home() {
         </div>
         {/* conditional rendering baesd on input */}
         {type === "image url" && (
-          <ImageURLInput onSubmit={handleImageURLSubmit} model={LLM} prompt={prompt} />
+          <ImageURLInput
+            onSubmit={handleImageURLSubmit}
+            onUpload={handlePreview}
+            model={LLM}
+            prompt={prompt}
+          />
         )}
         {type === "image file" && (
-         <div className={styles.inlineContainer}>
-         <UploadButton onSubmit={handleFileSubmit} model={LLM} prompt={prompt} />
-       </div>
+          <div className={styles.inlineContainer}>
+            <UploadButton
+              onSubmit={handleFileSubmit}
+              onUpload={handlePreview}
+              model={LLM}
+              prompt={prompt}
+            />
+          </div>
         )}
         {type === "csv" && (
           <div className={styles.inlineContainer}>
-            <input
-              type="text"
-              placeholder="enter api key"
-              className={styles.input}
+            <CSVUpload
+              onSubmit={handleFileSubmit}
+              onUpload={handlePreview}
+              model={LLM}
+              prompt={prompt}
             />
-            <UploadButton onSubmit={handleFileSubmit} />
           </div>
         )}
-        {description &&
-        <p className={styles.centeredParagraph}>
-         {JSON.stringify(description, null, 2)}
-        </p>
-}
+         <div className={styles.inlineContainer}>
+        {preview && (
+          <div>
+            <div className={styles.imageContainer}>
+              <img
+                src={preview}
+                className={styles.centeredImage}
+                alt="Uploaded Preview"
+                onerror="this.style.display='none'"
+              />
+            </div>
+          </div>
+        )}
+        {description && (
+          <p className={styles.centeredParagraph}>
+            {JSON.stringify(description, null, 2)}
+          </p>
+        )}
+        </div>
       </main>
       <Background />
     </div>

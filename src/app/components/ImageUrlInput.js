@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button, LinearProgress } from "@mui/material";
 import styles from "../styles/Home.module.css";
 
-const ImageURLInput = ({ onSubmit, model, prompt }) => {
+const ImageURLInput = ({ onSubmit, onUpload, model, prompt }) => {
   const [apiKey, setApiKey] = useState("");
   const [loading, startLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
@@ -15,6 +15,7 @@ const ImageURLInput = ({ onSubmit, model, prompt }) => {
 
   const handleImageUrlChange = (event) => {
     setImageUrl(event.target.value);
+    onUpload(event.target.value);
   };
 
   let apiRoute;
