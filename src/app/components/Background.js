@@ -1,4 +1,4 @@
-// components/FallingImages.js
+// components/Background.js
 import React from 'react';
 
 const images = [
@@ -53,7 +53,7 @@ const images = [
         "https://brooklynmuseum.b-cdn.net/collections/objects/CUR.2017.31.32_recto_Kramarsky_photograph.jpg"
 ];
 
-const FallingImages = () => {
+const Background = () => {
   return (
     
     <div className="falling-images-container">
@@ -78,4 +78,4 @@ const FallingImages = () => {
   );
 };
 
-export default FallingImages;
+export default Background;

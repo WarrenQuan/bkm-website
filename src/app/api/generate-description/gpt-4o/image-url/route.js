@@ -8,11 +8,7 @@ export async function POST(request) {
   const headersList = headers()
   const apiKey = headersList.get('x-api-key')
   const imageUrl  = res.imageUrl;
-  console.log("havings res")
-  console.log(res)
-  console.log(res.imageUrl)
-  console.log(apiKey)
-
+  const prompt  = res.prompt;
     if (!imageUrl) {
       return Response.json({ error: 'Image URL is required' });
     }
@@ -22,9 +18,7 @@ export async function POST(request) {
     }
 
     try {
-      const description = await getOpenAIDescriptionFromImage(apiKey, null, imageUrl, 'gpt-4o');
-      console.log("INSIDE DESCRIPTION")
-      console.log(description)
+      const description = await getOpenAIDescriptionFromImage(apiKey, null, imageUrl, 'gpt-4o', prompt);
       return Response.json(description);
     } catch (error) {
       return Response.json({ error: 'Error generating description' });

@@ -8,8 +8,8 @@ export async function POST(request) {
   const headersList = headers()
   const apiKey = headersList.get('x-api-key')
   const imageUrl  = res.imageUrl;
-  console.log(res.imageUrl)
-  console.log(apiKey)
+  const prompt  = res.prompt;
+ 
 
     if (!imageUrl) {
       return Response.json({ error: 'Image URL is required' });
@@ -20,7 +20,7 @@ export async function POST(request) {
     }
 
     try {
-      const description = await getGoogleGeminiDescriptionFromImage(apiKey, null, imageUrl, 'gemini-1.5-flash');
+      const description = await getGoogleGeminiDescriptionFromImage(apiKey, null, imageUrl, 'gemini-1.5-flash', prompt);
       return Response.json(description);
     } catch (error) {
       return Response.json({ error: 'Error generating description' });

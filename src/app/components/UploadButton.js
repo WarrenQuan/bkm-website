@@ -53,7 +53,7 @@ const UploadButton = ({ onSubmit, model, prompt }) => {
       console.log({base64File})
       const response = await axios.post(
         `/api/generate-description/${apiRoute}/image`,
-        { image: base64File, prompt },
+        { base64: base64File, prompt: prompt },
         {
           headers: {
             'Content-Type': 'application/json',

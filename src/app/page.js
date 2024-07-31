@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import styles from "./styles/Home.module.css";
-import FallingImages from "./components/FallingImages";
+import Background from "./components/Background";
 import BasicSelect from "./components/Dropdown";
 import UploadButton from "./components/UploadButton";
 import ImageURLInput from "./components/ImageUrlInput";
@@ -26,7 +26,7 @@ const colorOptionsType = [
 ];
 
 export default function Home() {
-  const [generateItem, setGenerate] = React.useState("metadata");
+  const [prompt, setPrompt] = React.useState("metadata");
   const [LLM, setLLMLabel] = React.useState("gpt4");
   const [type, setTypeLabel] = React.useState("image url");
   const [file, setFile] = React.useState();
@@ -36,6 +36,7 @@ export default function Home() {
     setFile(files);
     console.log("selected option", file);
   };
+
   const handleImageURLSubmit = (data) => {
     setDescription(data); // Update the parent state with the response data
   };
@@ -46,9 +47,9 @@ export default function Home() {
     setDescription(data);
   };
 
-  const handleOptionGenerateChange = (label) => {
+  const handleOptionPromptChange = (label) => {
     console.log("selected option", label);
-    setGenerate(label);
+    setPrompt(label);
   };
   const handleOptionLLMChange = (label) => {
     console.log("selected option", label);
@@ -77,7 +78,7 @@ export default function Home() {
           </h1>
           <BasicSelect
             colorOptions={colorOptionsGenerate}
-            onOptionChange={handleOptionGenerateChange}
+            onOptionChange={handleOptionPromptChange}
           />
           <h1 className={styles.title}>
             <span className="font-bold">using </span>
@@ -96,11 +97,11 @@ export default function Home() {
         </div>
         {/* conditional rendering baesd on input */}
         {type === "image url" && (
-          <ImageURLInput onSubmit={handleImageURLSubmit} model={LLM} prompt={generateItem} />
+          <ImageURLInput onSubmit={handleImageURLSubmit} model={LLM} prompt={prompt} />
         )}
         {type === "image file" && (
          <div className={styles.inlineContainer}>
-         <UploadButton onSubmit={handleFileSubmit} model={LLM} prompt={generateItem} />
+         <UploadButton onSubmit={handleFileSubmit} model={LLM} prompt={prompt} />
        </div>
         )}
         {type === "csv" && (
@@ -119,7 +120,7 @@ export default function Home() {
         </p>
 }
       </main>
-      <FallingImages />
+      <Background />
     </div>
   );
 }

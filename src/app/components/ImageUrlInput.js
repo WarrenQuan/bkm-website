@@ -47,7 +47,7 @@ const ImageURLInput = ({ onSubmit, model, prompt }) => {
           "Content-Type": "application/json",
           "x-api-key": apiKey,
         },
-        body: JSON.stringify({ imageUrl: imageUrl, prompt }),
+        body: JSON.stringify({ imageUrl: imageUrl, prompt: prompt }),
       }
     );
 

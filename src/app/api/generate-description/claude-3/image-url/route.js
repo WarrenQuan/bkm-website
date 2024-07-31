@@ -8,6 +8,7 @@ export async function POST(request) {
   const headersList = headers()
   const apiKey = headersList.get('x-api-key')
   const imageUrl  = res.imageUrl;
+  const prompt  = res.prompt;
   console.log(res.imageUrl)
   console.log(apiKey)
 
@@ -20,7 +21,7 @@ export async function POST(request) {
     }
 
     try {
-      const description = await getClaudeDescriptionFromImage(apiKey, null, imageUrl, 'claude-3-5-sonnet-20240620');
+      const description = await getClaudeDescriptionFromImage(apiKey, null, imageUrl, 'claude-3-5-sonnet-20240620', prompt);
       return Response.json(description);
     } catch (error) {
       return Response.json({ error: 'Error generating description' });

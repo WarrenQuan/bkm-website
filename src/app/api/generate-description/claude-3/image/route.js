@@ -8,12 +8,8 @@ export async function POST(request) {
   const res = await request.json()
   const headersList = headers()
   const apiKey = headersList.get('x-api-key')
-  const image  = res;
-  console.log("havings res")
-  // console.log(res)
-  // console.log(apiKey)
 
-    if (!image) {
+    if (!res.base64) {
       
       return Response.json({ error: 'Image is required' });
     }
@@ -23,8 +19,7 @@ export async function POST(request) {
     }
 
     try {
-      console.log("ASDFADS")
-      const description = await getClaudeDescriptionFromImage(apiKey, image, null, 'claude-3-5-sonnet-20240620');
+      const description = await getClaudeDescriptionFromImage(apiKey, res.base64, null, 'claude-3-5-sonnet-20240620', res.prompt);
       return Response.json(description);
     } catch (error) {
       return Response.json({ error: 'Error generating description' });
