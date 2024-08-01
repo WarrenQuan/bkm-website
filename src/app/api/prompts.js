@@ -55,7 +55,7 @@ If the image evokes a complex emotional response, feel free to choose terms from
 
 The output texts precisely adhere to the following guidelines:
 
-1. SENTIMENT: Choose five words from the aforementioned categories to describe the sentiment of the art piece.
+1. SENTIMENT TAGS: Choose five words from the aforementioned categories to describe the sentiment of the art piece.
 
 2. REASONING: Formulate a concise, essential summary approximately two sentences in length on reasoning for choosing the sentiments from the following categories. Consider the core aspects to focus on and enchancing descriptions described below.
 

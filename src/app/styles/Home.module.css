@@ -84,6 +84,9 @@
     text-align: center; /* Center the text inside the paragraph */
     overflow-wrap: break-word; /* Ensure long words break and wrap onto the 
     next line */
+    word-wrap: break-word;
+white-space: pre-wrap;
+word-break: break-word;
     padding: 4% 4% 4% 4%;
     word-break: break-word; /* Break long words if needed */
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);;

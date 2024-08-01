@@ -286,9 +286,10 @@ export default function Home() {
             </div>
           )}
           {description && (
-            <p className={styles.centeredParagraph}>
+            <pre className={styles.centeredParagraph}>
               {JSON.stringify(description, null, 2)}
-            </p>
+              {/* {description} */}
+            </pre>
           )}
         </div>
       </main>
