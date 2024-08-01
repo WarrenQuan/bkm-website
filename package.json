@@ -23,6 +23,7 @@
     "mui-file-dropzone": "^4.0.2",
     "mui-file-input": "^4.0.6",
     "next": "14.2.5",
+    "next-auth": "^4.24.7",
     "openai": "^4.53.2",
     "papaparse": "^5.4.1",
     "react": "^18",

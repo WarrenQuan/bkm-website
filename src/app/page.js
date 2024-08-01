@@ -1,14 +1,16 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./styles/Home.module.css";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Background from "./components/Background";
 import BasicSelect from "./components/Dropdown";
 import UploadButton from "./components/UploadButton";
 import ImageURLInput from "./components/ImageUrlInput";
 import CSVUpload from "./components/CSVUpload";
 import Head from "next/head";
-
+import { Button } from "@mui/material";
 const axios = require("axios");
+require('dotenv').config()
 
 const colorOptionsGenerate = [
   { value: "#03a9f4", label: "metadata" },
@@ -35,21 +37,16 @@ export default function Home() {
   const [file, setFile] = React.useState();
   const [preview, setPreview] = React.useState();
   const [description, setDescription] = React.useState("");
+  const [isBkmEmployee, setisEmployee] = React.useState(false);
 
-  const handleFile = (files) => {
-    setFile(files);
-    console.log("selected option", file);
-  };
+  const { data: session } = useSession();
 
   const handlePreview = async (file) => {
-    if(typeof file === 'string' || file instanceof String){
-      if(await checkImage(file))
-        setPreview(file);
-      else
-        setPreview("");
-    }
-    else
-      setPreview(URL.createObjectURL(file));
+    if (typeof file === "string" || file instanceof String) {
+      console.log("IS A STRING")
+      if (await checkImage(file)) setPreview(file);
+      else setPreview("");
+    } else setPreview(URL.createObjectURL(file));
   };
 
   const handleImageURLSubmit = (data) => {
@@ -62,6 +59,7 @@ export default function Home() {
     setDescription(data);
   };
 
+
   const handleOptionPromptChange = (label) => {
     console.log("selected option", label);
     setPrompt(label);
@@ -73,16 +71,29 @@ export default function Home() {
   const handleOptionTypeChange = (label) => {
     console.log("selected option", label);
     setTypeLabel(label);
+  };  
+  
+  const handleSessionUser = () => {
+    const allowedDomain = "brooklynmuseum.org"; // Replace with the organization's domain
+    const userDomain = session.user.email.split('@')[1];
+    setisEmployee(userDomain === allowedDomain);
   };
 
-async function checkImage(imageUrl) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(true); // Image loaded successfully
-    img.onerror = () => resolve(false); // Image failed to load
-    img.src = imageUrl;
-});
+  useEffect(() => {
+    if (session?.user) {
+      handleSessionUser();
+    }
+  }, [session]);
+
+  async function checkImage(imageUrl) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(true); // Image loaded successfully
+      img.onerror = () => resolve(false); // Image failed to load
+      img.src = imageUrl;
+    });
   }
+  
 
   return (
     <div className={styles.container}>
@@ -95,9 +106,57 @@ async function checkImage(imageUrl) {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <div>
+        {!session ? (
+          <>
+            <Button
+            onClick={() => signIn("google") }
+              variant="contained"
+              href="#contained-buttons"
+              color="primary"
+              style={{
+                backgroundColor: "black",
+                margin: "20px",
+                position: "absolute",
+                top: "0",
+                right: "0",
+                float: "right",
+              }}
+              
+            >
+              bkm sign in
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              onClick={() => signOut()}
+              variant="contained"
+              href="#contained-buttons"
+              color="primary"
+              style={{
+                backgroundColor: "black",
+                margin: "20px",
+                position: "absolute",
+                top: "0",
+                right: "0",
+                float: "right",
+              }}
+            >
+              bkm sign out
+            </Button>
+          </>
+        )}
+      </div>
       <main className={styles.main}>
+         <h1 className={styles.title}>
+      {session && session.user.name && (
+              <span className="font-bold" style={{fontSize: "36px", color: "black"}}>welcome {session.user.name.toLowerCase().split(" ")[0]}! </span>
+            )}</h1>
         <div className={styles.inlineContainer}>
           <h1 className={styles.title}>
+            
+
             <span className="font-bold">generate </span>
           </h1>
           <BasicSelect
@@ -126,8 +185,11 @@ async function checkImage(imageUrl) {
             onUpload={handlePreview}
             model={LLM}
             prompt={prompt}
+            isBkmEmployee={isBkmEmployee}
+            
           />
         )}
+        {/* add admin param to each to potentially plug in api key and get rid of input (!admin) */}
         {type === "image file" && (
           <div className={styles.inlineContainer}>
             <UploadButton
@@ -135,6 +197,7 @@ async function checkImage(imageUrl) {
               onUpload={handlePreview}
               model={LLM}
               prompt={prompt}
+              isBkmEmployee={isBkmEmployee}
             />
           </div>
         )}
@@ -145,27 +208,28 @@ async function checkImage(imageUrl) {
               onUpload={handlePreview}
               model={LLM}
               prompt={prompt}
+              isBkmEmployee={isBkmEmployee}
             />
           </div>
         )}
-         <div className={styles.inlineContainer}>
-        {preview && (
-          <div>
-            <div className={styles.imageContainer}>
-              <img
-                src={preview}
-                className={styles.centeredImage}
-                alt="Uploaded Preview"
-                onerror="this.style.display='none'"
-              />
+        <div className={styles.inlineContainer}>
+          {preview && (
+            <div>
+              <div className={styles.imageContainer}>
+                <img
+                  src={preview}
+                  className={styles.centeredImage}
+                  alt="Uploaded Preview"
+                  onerror="this.style.display='none'"
+                />
+              </div>
             </div>
-          </div>
-        )}
-        {description && (
-          <p className={styles.centeredParagraph}>
-            {JSON.stringify(description, null, 2)}
-          </p>
-        )}
+          )}
+          {description && (
+            <p className={styles.centeredParagraph}>
+              {JSON.stringify(description, null, 2)}
+            </p>
+          )}
         </div>
       </main>
       <Background />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Button, LinearProgress } from '@mui/material';
 import { FileUploader } from "react-drag-drop-files";
 import styles from "../styles/Home.module.css";
@@ -6,31 +6,43 @@ import Alert from '@mui/material/Alert';
 import axios from 'axios';
 
 
-const UploadButton = ({ onSubmit, onUpload, model, prompt }) => {
+const UploadButton = ({ onSubmit, onUpload, model, prompt, isBkmEmployee }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [apiKey, setApiKey] = useState("")
+  const [apiRoute, setApiRoute] = useState("");
+
   const handleApiKeyChange = (event) => {
     setApiKey(event.target.value);
   };
+  useEffect(() => {
+    let route = "gpt-4-turbo"; // default route
+    let key = apiKey; // default key
 
-  let apiRoute;
-  switch (model) {
-    case "gpt4":
-      apiRoute = "gpt-4o";
-      break;
-    case "gemini":
-      apiRoute = "gemini-1.5-flash";
-      break;
-    case "claude":
-      apiRoute = "claude-3";
-      break;
-    default:
-      apiRoute = "gpt-4-turbo";
-  }
+    switch (model) {
+      case "gpt4":
+        route = "gpt-4o";
+        key = isBkmEmployee ? process.env.NEXT_PUBLIC_OPENAI_API_KEY : key;
+        break;
+      case "gemini":
+        route = "gemini-1.5-flash";
+        key = isBkmEmployee ? process.env.NEXT_PUBLIC_GOOGLE_API_KEY : key;
+        break;
+      case "claude":
+        route = "claude-3";
+        key = isBkmEmployee ? process.env.NEXT_PUBLIC_CLAUDE_API_KEY : key;
+        break;
+      default:
+        key = isBkmEmployee ? process.env.NEXT_PUBLIC_OPENAI_API_KEY : key;
+    }
+
+    setApiRoute(route);
+    setApiKey(key);
+  }, [model, isBkmEmployee]);
 
   const handleFileChange = (file) => {
     setSelectedFile(file);
+    onUpload(selectedFile);
   };
 
   const getBase64 = (file) => {
@@ -66,7 +78,6 @@ const UploadButton = ({ onSubmit, onUpload, model, prompt }) => {
       );
 
       if (response.status === 200) {
-        onUpload(file);
         onSubmit(response.data); // Pass the response data up to the parent
         console.log(response.data);
       } else {
@@ -84,6 +95,7 @@ const UploadButton = ({ onSubmit, onUpload, model, prompt }) => {
   return (
     <div>
       <div className={styles.inlineContainer}>
+      {!isBkmEmployee && (
       <input
           type="text"
           placeholder="enter api key"
@@ -91,6 +103,7 @@ const UploadButton = ({ onSubmit, onUpload, model, prompt }) => {
           value={apiKey}
           onChange={handleApiKeyChange}
         />
+      )}
         <FileUploader 
                multiple={false}
          id="upload-file"

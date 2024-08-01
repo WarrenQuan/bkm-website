@@ -1,13 +1,14 @@
 // components/ImageURLInput.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, LinearProgress } from "@mui/material";
 import styles from "../styles/Home.module.css";
 
-const ImageURLInput = ({ onSubmit, onUpload, model, prompt }) => {
+const ImageURLInput = ({ onSubmit, onUpload, model, prompt, isBkmEmployee }) => {
   const [apiKey, setApiKey] = useState("");
   const [loading, startLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [response, setResponse] = useState(null);
+  const [apiRoute, setApiRoute] = useState("");
 
   const handleApiKeyChange = (event) => {
     setApiKey(event.target.value);
@@ -18,20 +19,29 @@ const ImageURLInput = ({ onSubmit, onUpload, model, prompt }) => {
     onUpload(event.target.value);
   };
 
-  let apiRoute;
-  switch (model) {
-    case "gpt4":
-      apiRoute = "gpt-4o";
-      break;
-    case "gemini":
-      apiRoute = "gemini-1.5-flash";
-      break;
-    case "claude":
-      apiRoute = "claude-3";
-      break;
-    default:
-      apiRoute = "gpt-4-turbo";
-  }
+  useEffect(() => {
+    let route = "gpt-4-turbo"; // default route
+    let key = apiKey; // default key
+
+    switch (model) {
+      case "gpt4":
+        route = "gpt-4o";
+        key = isBkmEmployee ? process.env.NEXT_PUBLIC_OPENAI_API_KEY : key;
+        break;
+      case "gemini":
+        route = "gemini-1.5-flash";
+        key = isBkmEmployee ? process.env.NEXT_PUBLIC_GOOGLE_API_KEY : key;
+        break;
+      case "claude":
+        route = "claude-3";
+        key = isBkmEmployee ? process.env.NEXT_PUBLIC_CLAUDE_API_KEY : key;
+        break;
+      default:
+        key = isBkmEmployee ? process.env.NEXT_PUBLIC_OPENAI_API_KEY : key;
+    }
+    setApiRoute(route);
+    setApiKey(key);
+  }, [model, isBkmEmployee]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -70,13 +80,14 @@ const ImageURLInput = ({ onSubmit, onUpload, model, prompt }) => {
      
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.inlineContainer}>
+      {!isBkmEmployee && (
         <input
           type="text"
           placeholder="enter api key"
           className={styles.input}
           value={apiKey}
           onChange={handleApiKeyChange}
-        />
+        />)}
         <input
           type="text"
           placeholder="enter image url"

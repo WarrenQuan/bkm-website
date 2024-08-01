@@ -12,6 +12,7 @@
     justify-content: center; /* Centers the image horizontally */
     align-items: center; /* Centers the image vertically */
     margin: 20px; /* Adjust this value for the desired margin around the image */
+    margin-left: 0px;
     height: calc(50vh); /* Adjust this value for your layout */
     box-sizing: border-box; /* Ensures padding/margin don't affect the 
     container's size */
@@ -76,6 +77,8 @@
   .centeredParagraph {
     background-color: rgb(255,255,255,0.8);
     border-radius: 20px;
+    display: flex;
+    justify-content: center; 
     max-width: 70vw; /* Maximum width of the paragraph */
     margin: 30px auto;   /* Center the paragraph block */
     text-align: center; /* Center the text inside the paragraph */
