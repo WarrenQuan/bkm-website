@@ -121,7 +121,7 @@ export default function Home() {
                   float: "left",
                 }}
               >
-                Log in to BKM account to access preloaded API-keys
+                Log in to BkM account to access preloaded API-keys
               </Alert>
             )}
           </>
@@ -159,7 +159,7 @@ export default function Home() {
                   float: "left",
                 }}
               >
-                Logged into a non-BKM affiliated account. Please log-in to a BKM
+                Logged into a non-BkM affiliated account. Please log-in to a BkM
                 email.
               </Alert>
             )}
