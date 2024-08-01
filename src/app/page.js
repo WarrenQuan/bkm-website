@@ -8,9 +8,9 @@ import UploadButton from "./components/UploadButton";
 import ImageURLInput from "./components/ImageUrlInput";
 import CSVUpload from "./components/CSVUpload";
 import Head from "next/head";
-import { Button } from "@mui/material";
+import { Button, Alert, Fade } from "@mui/material";
 const axios = require("axios");
-require('dotenv').config()
+require("dotenv").config();
 
 const colorOptionsGenerate = [
   { value: "#03a9f4", label: "metadata" },
@@ -31,6 +31,7 @@ const colorOptionsType = [
 ];
 
 export default function Home() {
+  const [open, setOpen] = React.useState(true);
   const [prompt, setPrompt] = React.useState("metadata");
   const [LLM, setLLMLabel] = React.useState("gpt4");
   const [type, setTypeLabel] = React.useState("image url");
@@ -43,7 +44,7 @@ export default function Home() {
 
   const handlePreview = async (file) => {
     if (typeof file === "string" || file instanceof String) {
-      console.log("IS A STRING")
+      console.log("IS A STRING");
       if (await checkImage(file)) setPreview(file);
       else setPreview("");
     } else setPreview(URL.createObjectURL(file));
@@ -59,7 +60,6 @@ export default function Home() {
     setDescription(data);
   };
 
-
   const handleOptionPromptChange = (label) => {
     console.log("selected option", label);
     setPrompt(label);
@@ -71,11 +71,11 @@ export default function Home() {
   const handleOptionTypeChange = (label) => {
     console.log("selected option", label);
     setTypeLabel(label);
-  };  
-  
+  };
+
   const handleSessionUser = () => {
     const allowedDomain = "brooklynmuseum.org"; // Replace with the organization's domain
-    const userDomain = session.user.email.split('@')[1];
+    const userDomain = session.user.email.split("@")[1];
     setisEmployee(userDomain === allowedDomain);
   };
 
@@ -93,7 +93,6 @@ export default function Home() {
       img.src = imageUrl;
     });
   }
-  
 
   return (
     <div className={styles.container}>
@@ -109,8 +108,67 @@ export default function Home() {
       <div>
         {!session ? (
           <>
+            {open && (
+              <Alert
+                open={open}
+                onClose={() => setOpen(false)}
+                severity="info"
+                style={{
+                  margin: "20px",
+                  position: "absolute",
+                  top: "0",
+                  left: "0",
+                  float: "left",
+                }}
+              >
+                Log in to BKM account to access preloaded API-keys
+              </Alert>
+            )}
+          </>
+        ) : isBkmEmployee ? (
+          <>
+            {open && (
+              <Alert
+                open={open}
+                onClose={() => setOpen(false)}
+                severity="success"
+                style={{
+                  margin: "20px",
+                  position: "absolute",
+                  top: "0",
+                  left: "0",
+                  float: "left",
+                }}
+              >
+                Logged In
+              </Alert>
+            )}
+          </>
+        ) : (
+          <>
+            {open && (
+              <Alert
+                open={open}
+                onClose={() => setOpen(false)}
+                severity="warning"
+                style={{
+                  margin: "20px",
+                  position: "absolute",
+                  top: "0",
+                  left: "0",
+                  float: "left",
+                }}
+              >
+                Logged into a non-BKM affiliated account. Please log-in to a BKM
+                email.
+              </Alert>
+            )}
+          </>
+        )}
+        {!session ? (
+          <>
             <Button
-            onClick={() => signIn("google") }
+              onClick={() => signIn("google")}
               variant="contained"
               href="#contained-buttons"
               color="primary"
@@ -122,7 +180,6 @@ export default function Home() {
                 right: "0",
                 float: "right",
               }}
-              
             >
               bkm sign in
             </Button>
@@ -149,14 +206,18 @@ export default function Home() {
         )}
       </div>
       <main className={styles.main}>
-         <h1 className={styles.title}>
-      {session && session.user.name && (
-              <span className="font-bold" style={{fontSize: "36px", color: "black"}}>welcome {session.user.name.toLowerCase().split(" ")[0]}! </span>
-            )}</h1>
+        <h1 className={styles.title}>
+          {session && session.user.name && (
+            <span
+              className="font-bold"
+              style={{ fontSize: "36px", color: "black" }}
+            >
+              welcome {session.user.name.toLowerCase().split(" ")[0]}!{" "}
+            </span>
+          )}
+        </h1>
         <div className={styles.inlineContainer}>
           <h1 className={styles.title}>
-            
-
             <span className="font-bold">generate </span>
           </h1>
           <BasicSelect
@@ -186,7 +247,6 @@ export default function Home() {
             model={LLM}
             prompt={prompt}
             isBkmEmployee={isBkmEmployee}
-            
           />
         )}
         {/* add admin param to each to potentially plug in api key and get rid of input (!admin) */}
