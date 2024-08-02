@@ -42,7 +42,7 @@ const UploadButton = ({ onSubmit, onUpload, model, prompt, isBkmEmployee }) => {
 
   const handleFileChange = (file) => {
     setSelectedFile(file);
-    onUpload(selectedFile);
+    onUpload(file);
   };
 
   const getBase64 = (file) => {

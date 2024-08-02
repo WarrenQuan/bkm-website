@@ -83,7 +83,7 @@ const CSVUpload = ({ onSubmit, onUpload, model, prompt, isBkmEmployee }) => {
               updatedData.push({
                 ...rest,
                 imageUrl,
-                [prompt]: data.toString(),
+                [prompt]: JSON.stringify(data, null, 2),
               });
               onUpload(imageUrl);
               let completionString;
@@ -92,7 +92,7 @@ const CSVUpload = ({ onSubmit, onUpload, model, prompt, isBkmEmployee }) => {
               else
                 completionString =
                   (progressTracker / result.data.length) * 100 + "% complete! ";
-              onSubmit(completionString + "Most Recent Generation:" + data); // Pass the response data up to the parent
+              onSubmit(completionString + "Most Recent Generation:" + JSON.stringify(data, null, 2)); // Pass the response data up to the parent
               console.log(data);
             } else {
               console.log(data.error);
