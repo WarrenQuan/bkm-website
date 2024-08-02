@@ -170,7 +170,6 @@ export default function Home() {
             <Button
               onClick={() => signIn("google")}
               variant="contained"
-              href="#contained-buttons"
               color="primary"
               style={{
                 backgroundColor: "black",
