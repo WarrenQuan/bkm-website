@@ -151,7 +151,7 @@ const CSVUpload = ({ onSubmit, onUpload, model, prompt, isBkmEmployee }) => {
         </Button>
       </div>
       <p className="font-bold" style={{ textAlign: "center" }}>
-        ensure there is an "imageUrl" column
+        ensure there is an &quot;imageUrl&quot; column
       </p>
       {loading && (
         <LinearProgress
