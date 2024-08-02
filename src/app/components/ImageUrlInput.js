@@ -82,7 +82,7 @@ const ImageURLInput = ({ onSubmit, onUpload, model, prompt, isBkmEmployee }) => 
       <div className={styles.inlineContainer}>
       {!isBkmEmployee && (
         <input
-          type="text"
+          type="password"
           placeholder="enter api key"
           className={styles.input}
           value={apiKey}
