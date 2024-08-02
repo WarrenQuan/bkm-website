@@ -10,6 +10,7 @@ const handler =  NextAuth({
     }),
   ],
   callbacks: {
+    secret:process.env.SECRET,
     // async signIn({ user }) {
     //   // Check if the domain matches the specific organization
     //   const allowedDomain = "brooklynmuseum.org"; // Replace with the organization's domain
