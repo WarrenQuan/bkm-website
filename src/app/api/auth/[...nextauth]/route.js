@@ -10,7 +10,6 @@ const handler =  NextAuth({
     }),
   ],
   callbacks: {
-    secret:process.env.SECRET,
     // async signIn({ user }) {
     //   // Check if the domain matches the specific organization
     //   const allowedDomain = "brooklynmuseum.org"; // Replace with the organization's domain
@@ -27,7 +26,7 @@ const handler =  NextAuth({
     //   session.employee = userDomain === allowedDomain;
       return session;
     },
-  },
+  },     secret:process.env.NEXTAUTH_SECRET,
 });
 
-export { handler as GET, handler as POST }; // <- THIS IS WHAT WORKED
+export { handler as GET, handler as POST }; 
